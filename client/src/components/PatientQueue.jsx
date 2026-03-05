@@ -1,41 +1,5 @@
-const mockPatients = [
-  {
-    id: "1",
-    name: "John Doe",
-    age: 34,
-    symptoms: ["fever", "headache", "vomiting"],
-    urgency: "Critical",
-    score: 85,
-    createdAt: "2026-03-05T10:00:00Z"
-  },
-  {
-    id: "2",
-    name: "Jane Smith",
-    age: 22,
-    symptoms: ["cough", "runny nose"],
-    urgency: "Low",
-    score: 20,
-    createdAt: "2026-03-05T10:05:00Z"
-  },
-  {
-    id: "3",
-    name: "Peter Kamau",
-    age: 45,
-    symptoms: ["chest pain", "shortness of breath"],
-    urgency: "Critical",
-    score: 92,
-    createdAt: "2026-03-05T10:10:00Z"
-  },
-  {
-    id: "4",
-    name: "Amina Hassan",
-    age: 30,
-    symptoms: ["dizziness", "nausea"],
-    urgency: "Moderate",
-    score: 55,
-    createdAt: "2026-03-05T10:15:00Z"
-  }
-]
+import { useState, useEffect } from "react"
+import { getPatients } from "../api/patients"
 
 function getUrgencyColor(urgency) {
   if (urgency === "Critical") return "red"
@@ -43,8 +7,29 @@ function getUrgencyColor(urgency) {
   return "green"
 }
 
-function PatientQueue() {
-  const sorted = [...mockPatients].sort((a, b) => b.score - a.score)
+function PatientQueue({ onSelectPatient }) {
+  const [patients, setPatients] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function fetchPatients() {
+      try {
+        const data = await getPatients()
+        setPatients(data)
+      } catch (error) {
+        console.error("Error fetching patients:", error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchPatients()
+  }, [])
+
+  if (loading) return <p>Loading patients...</p>
+  if (patients.length === 0) return <p>No patients registered yet.</p>
+
+  const sorted = [...patients].sort((a, b) => b.score - a.score)
 
   return (
     <div>
@@ -52,11 +37,13 @@ function PatientQueue() {
       {sorted.map((patient) => (
         <div
           key={patient.id}
+          onClick={() => onSelectPatient(patient.id)}
           style={{
             border: "1px solid #ccc",
             padding: "10px",
             marginBottom: "10px",
-            borderLeft: `5px solid ${getUrgencyColor(patient.urgency)}`
+            borderLeft: `5px solid ${getUrgencyColor(patient.urgency)}`,
+            cursor: "pointer"
           }}
         >
           <strong>{patient.name}</strong> — Age: {patient.age}

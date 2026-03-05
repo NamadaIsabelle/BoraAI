@@ -1,11 +1,13 @@
 import { useState } from "react"
+import { submitPatient } from "../api/patients"
 
 function PatientForm() {
   const [name, setName] = useState("")
   const [age, setAge] = useState("")
   const [symptoms, setSymptoms] = useState("")
+  const [loading, setLoading] = useState(false)
 
-  function handleSubmit() {
+  async function handleSubmit() {
     if (!name || !age || !symptoms) {
       alert("Please fill in all fields")
       return
@@ -13,12 +15,24 @@ function PatientForm() {
 
     const patient = {
       name: name,
-      age: age,
+      age: parseInt(age),
       symptoms: symptoms.split(",").map(s => s.trim())
     }
 
-    console.log("Patient submitted:", patient)
-    alert(`Patient ${name} submitted successfully!`)
+    try {
+      setLoading(true)
+      const result = await submitPatient(patient)
+      console.log("Patient created:", result)
+      alert(`Patient ${name} submitted! Urgency: ${result.urgency}`)
+      setName("")
+      setAge("")
+      setSymptoms("")
+    } catch (error) {
+      console.error("Error submitting patient:", error)
+      alert("Something went wrong. Please try again.")
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -64,7 +78,9 @@ function PatientForm() {
 
       <br />
 
-      <button onClick={handleSubmit}>Submit Patient</button>
+      <button onClick={handleSubmit} disabled={loading}>
+        {loading ? "Submitting..." : "Submit Patient"}
+      </button>
     </div>
   )
 }
