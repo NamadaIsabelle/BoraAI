@@ -1,6 +1,7 @@
 import PatientForm from "./components/PatientForm"
 import PatientQueue from "./components/PatientQueue"
 import VitalsForm from "./components/VitalsForm"
+import PatientDetail from "./components/PatientDetail"
 
 function App() {
   return (
@@ -11,6 +12,8 @@ function App() {
       <PatientQueue />
       <hr />
       <VitalsForm />
+      <hr />
+      <PatientDetail />
     </div>
   )
 }
