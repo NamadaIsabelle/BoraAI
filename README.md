@@ -156,3 +156,71 @@ This project:
 ## Summary
 
 BoraCare AI is a lightweight AI-powered triage and monitoring system designed for under-resourced rural clinics. It automatically prioritizes patients based on symptom severity and tracks vital signs over time, helping healthcare workers detect critical cases earlier and allocate resources more efficiently.
+
+---
+
+## Getting Started
+
+Prerequisites:
+
+- Node.js 18+ and npm
+- Git
+
+The repository contains two apps:
+
+- `server/` — Next.js (App Router) backend with Prisma + SQLite (development). See `server/` for scripts and Prisma migrations.
+- `client/` — Vite + React frontend (lightweight UI using local mock data).
+
+See `docs/API_CONTRACT.md` for the API specification used by the frontend and backend.
+
+### Run the backend (development)
+
+Open a terminal and run:
+
+```bash
+cd server
+npm install
+# generate Prisma client (only needed if you edit schema)
+npm run db:generate
+# run migrations and create local SQLite database
+npx prisma migrate dev --name init
+npm run dev
+```
+
+The backend will run on http://localhost:3000 and exposes the API at `/api` (see `docs/API_CONTRACT.md`).
+
+### Run the frontend (development)
+
+Open a separate terminal and run:
+
+```bash
+cd client
+npm install
+npm run dev
+```
+
+Vite's dev server typically opens at http://localhost:5173. The current frontend components use mock data; see the next section for integration work.
+
+## Current status
+
+- Backend: Implemented Next.js API routes with Prisma models (`Patient`, `Vital`), triage logic, and endpoints:
+	- `GET /api/patients`
+	- `POST /api/patients`
+	- `GET /api/patients/:id`
+	- `DELETE /api/patients/:id`
+	- `GET /api/patients/:id/vitals`
+	- `POST /api/patients/:id/vitals`
+- Frontend: Vite + React UI components present in `client/src/components` (`PatientForm`, `PatientQueue`, `PatientDetail`, `VitalsForm`) but currently use mock data and log to the console. Integration with the backend endpoints is pending.
+
+## Next steps
+
+- Wire the frontend components to the backend API (replace mock data with live requests).
+- Add authentication and role-based access for staff users.
+- Replace SQLite with MariaDB/Postgres for production (Prisma supports easy migration).
+- Add tests (unit for triage logic, integration for APIs, E2E for core flows).
+
+## Repository structure (high level)
+
+- `client/` — Vite React frontend
+- `server/` — Next.js backend (API routes) + Prisma
+- `docs/` — API contract and documentation
