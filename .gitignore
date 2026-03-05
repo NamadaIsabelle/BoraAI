@@ -31,4 +31,8 @@ docx_extracted/
 
 # Database
 *.db
+*.db-journal
 *.sqlite
+
+# Environment variables (server)
+server/.env

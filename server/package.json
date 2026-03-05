@@ -1,0 +1,20 @@
+{
+  "name": "boracare-ai-server",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "start": "next start -p 3000",
+    "db:migrate": "prisma migrate dev --name init",
+    "db:generate": "prisma generate",
+    "db:studio": "prisma studio"
+  },
+  "dependencies": {
+    "next": "^14.2.0",
+    "@prisma/client": "^5.11.0"
+  },
+  "devDependencies": {
+    "prisma": "^5.11.0"
+  }
+}
