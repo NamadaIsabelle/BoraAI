@@ -41,3 +41,11 @@ export async function submitVitals(id, vitals) {
   const data = await response.json()
   return data
 }
+
+export async function deletePatient(id) {
+  const response = await fetch(`${BASE_URL}/patients/${id}`, {
+    method: "DELETE"
+  })
+  const data = await response.json()
+  return data
+}

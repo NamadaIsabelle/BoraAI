@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
-import { getPatients } from "../api/patients"
+import { getPatients, deletePatient } from "../api/patients"
 
 function getUrgencyClass(urgency) {
   if (urgency === "Critical") return "critical"
@@ -63,7 +63,23 @@ function PatientQueue() {
             <span style={{ color: "var(--gray-400)", fontSize: "13px", marginTop: "4px", display: "block" }}>
               Score: {patient.score}
             </span>
-          </div>
+            <span style={{ color: "var(--gray-400)", fontSize: "12px", display: "block" }}>
+              {new Date(patient.createdAt).toLocaleTimeString()}
+            </span>
+            <button
+              className="secondary"
+              style={{ marginTop: "8px", fontSize: "12px", padding: "4px 10px" }}
+              onClick={async (e) => {
+                e.stopPropagation()
+                if (confirm(`Mark ${patient.name} as seen and remove from queue?`)) {
+                  await deletePatient(patient.id)
+                  setPatients(prev => prev.filter(p => p.id !== patient.id))
+                }
+              }}
+            >
+              ✓ Mark as Seen
+            </button>
+        </div>
         </div>
       ))}
     </div>
