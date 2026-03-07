@@ -2,10 +2,10 @@ import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { getPatients } from "../api/patients"
 
-function getUrgencyColor(urgency) {
-  if (urgency === "Critical") return "red"
-  if (urgency === "Moderate") return "orange"
-  return "green"
+function getUrgencyClass(urgency) {
+  if (urgency === "Critical") return "critical"
+  if (urgency === "Moderate") return "moderate"
+  return "low"
 }
 
 function PatientQueue() {
@@ -24,39 +24,43 @@ function PatientQueue() {
         setLoading(false)
       }
     }
-
     fetchPatients()
   }, [])
 
-  if (loading) return <p>Loading patients...</p>
-  if (patients.length === 0) return <p>No patients registered yet.</p>
+  if (loading) return <div className="page"><p>Loading patients...</p></div>
+  if (patients.length === 0) return <div className="page"><p>No patients registered yet.</p></div>
 
   const sorted = [...patients].sort((a, b) => b.score - a.score)
 
   return (
-    <div>
+    <div className="page">
       <h2>Patient Queue</h2>
-      <p style={{ color: "#666", fontSize: "14px" }}>Click a patient to view their details.</p>
+      <p style={{ color: "var(--gray-400)", fontSize: "14px", marginBottom: "20px" }}>
+        Click a patient to view their details.
+      </p>
       {sorted.map((patient) => (
         <div
           key={patient.id}
+          className={`patient-card ${getUrgencyClass(patient.urgency)}`}
           onClick={() => navigate(`/patients/${patient.id}`)}
-          style={{
-            border: "1px solid #ccc",
-            padding: "10px",
-            marginBottom: "10px",
-            borderLeft: `5px solid ${getUrgencyColor(patient.urgency)}`,
-            cursor: "pointer"
-          }}
         >
-          <strong>{patient.name}</strong> — Age: {patient.age}
-          <br />
-          Symptoms: {patient.symptoms.join(", ")}
-          <br />
-          Urgency: <span style={{ color: getUrgencyColor(patient.urgency) }}>
-            <strong>{patient.urgency}</strong>
-          </span>
-          &nbsp;| Score: {patient.score}
+          <div>
+            <strong style={{ fontSize: "16px" }}>{patient.name}</strong>
+            <span style={{ color: "var(--gray-400)", fontSize: "14px" }}> — Age: {patient.age}</span>
+            <br />
+            <span style={{ color: "var(--gray-600)", fontSize: "14px" }}>
+              {patient.symptoms.join(", ")}
+            </span>
+          </div>
+          <div style={{ textAlign: "right" }}>
+            <span className={`badge ${getUrgencyClass(patient.urgency)}`}>
+              {patient.urgency}
+            </span>
+            <br />
+            <span style={{ color: "var(--gray-400)", fontSize: "13px", marginTop: "4px", display: "block" }}>
+              Score: {patient.score}
+            </span>
+          </div>
         </div>
       ))}
     </div>

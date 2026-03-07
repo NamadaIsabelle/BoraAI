@@ -6,9 +6,33 @@ import PatientDetail from "./components/PatientDetail"
 
 function Home() {
   return (
-    <div>
-      <h2>Welcome to BoraCare AI</h2>
-      <p>Intelligent triage and patient monitoring for rural clinics.</p>
+    <div className="page">
+      <div className="home-hero">
+        <h1>BoraCare AI</h1>
+        <p>Intelligent triage and patient monitoring for rural clinics.</p>
+        <div className="home-cards">
+          <Link to="/register" className="home-card">
+            <div className="icon">🏥</div>
+            <h3>Register Patient</h3>
+            <p>Add a new patient and get instant triage scoring</p>
+          </Link>
+          <Link to="/queue" className="home-card">
+            <div className="icon">📋</div>
+            <h3>Patient Queue</h3>
+            <p>View prioritized patients sorted by urgency</p>
+          </Link>
+          <Link to="/vitals" className="home-card">
+            <div className="icon">❤️</div>
+            <h3>Log Vitals</h3>
+            <p>Record patient vital signs over time</p>
+          </Link>
+          <Link to="/queue" className="home-card">
+            <div className="icon">📊</div>
+            <h3>Patient Records</h3>
+            <p>View full patient history and vitals trends</p>
+          </Link>
+        </div>
+      </div>
     </div>
   )
 }
@@ -16,27 +40,21 @@ function Home() {
 function App() {
   return (
     <div>
-      <nav style={{ padding: "10px", borderBottom: "1px solid #ccc", marginBottom: "20px" }}>
+      <nav>
         <strong>BoraCare AI</strong>
-        &nbsp;&nbsp;|&nbsp;&nbsp;
         <Link to="/">Home</Link>
-        &nbsp;&nbsp;
         <Link to="/register">Register Patient</Link>
-        &nbsp;&nbsp;
         <Link to="/queue">Patient Queue</Link>
-        &nbsp;&nbsp;
         <Link to="/vitals">Log Vitals</Link>
       </nav>
 
-      <div style={{ padding: "0 20px" }}>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/register" element={<PatientForm />} />
-          <Route path="/queue" element={<PatientQueue />} />
-          <Route path="/vitals" element={<VitalsForm />} />
-          <Route path="/patients/:id" element={<PatientDetail />} />
-        </Routes>
-      </div>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/register" element={<PatientForm />} />
+        <Route path="/queue" element={<PatientQueue />} />
+        <Route path="/vitals" element={<VitalsForm />} />
+        <Route path="/patients/:id" element={<PatientDetail />} />
+      </Routes>
     </div>
   )
 }

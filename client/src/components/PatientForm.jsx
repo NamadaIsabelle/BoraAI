@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 import { submitPatient } from "../api/patients"
 
 function PatientForm() {
@@ -6,6 +7,7 @@ function PatientForm() {
   const [age, setAge] = useState("")
   const [symptoms, setSymptoms] = useState("")
   const [loading, setLoading] = useState(false)
+  const navigate = useNavigate()
 
   async function handleSubmit() {
     if (!name || !age || !symptoms) {
@@ -22,11 +24,8 @@ function PatientForm() {
     try {
       setLoading(true)
       const result = await submitPatient(patient)
-      console.log("Patient created:", result)
       alert(`Patient ${name} submitted! Urgency: ${result.urgency}`)
-      setName("")
-      setAge("")
-      setSymptoms("")
+      navigate("/queue")
     } catch (error) {
       console.error("Error submitting patient:", error)
       alert("Something went wrong. Please try again.")
@@ -36,51 +35,40 @@ function PatientForm() {
   }
 
   return (
-    <div>
+    <div className="page">
       <h2>Register New Patient</h2>
-
-      <div>
-        <label>Patient Name</label>
-        <br />
-        <input
-          type="text"
-          placeholder="Enter patient name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
+      <div className="card">
+        <div className="form-group">
+          <label>Patient Name</label>
+          <input
+            type="text"
+            placeholder="Enter patient name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+        </div>
+        <div className="form-group">
+          <label>Age</label>
+          <input
+            type="number"
+            placeholder="Enter age"
+            value={age}
+            onChange={(e) => setAge(e.target.value)}
+          />
+        </div>
+        <div className="form-group">
+          <label>Symptoms (separate with commas)</label>
+          <input
+            type="text"
+            placeholder="e.g. fever, headache, vomiting"
+            value={symptoms}
+            onChange={(e) => setSymptoms(e.target.value)}
+          />
+        </div>
+        <button onClick={handleSubmit} disabled={loading}>
+          {loading ? "Submitting..." : "Submit Patient"}
+        </button>
       </div>
-
-      <br />
-
-      <div>
-        <label>Age</label>
-        <br />
-        <input
-          type="number"
-          placeholder="Enter age"
-          value={age}
-          onChange={(e) => setAge(e.target.value)}
-        />
-      </div>
-
-      <br />
-
-      <div>
-        <label>Symptoms (separate with commas)</label>
-        <br />
-        <input
-          type="text"
-          placeholder="e.g. fever, headache, vomiting"
-          value={symptoms}
-          onChange={(e) => setSymptoms(e.target.value)}
-        />
-      </div>
-
-      <br />
-
-      <button onClick={handleSubmit} disabled={loading}>
-        {loading ? "Submitting..." : "Submit Patient"}
-      </button>
     </div>
   )
 }

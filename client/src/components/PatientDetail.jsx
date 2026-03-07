@@ -2,10 +2,10 @@ import { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { getPatient, getPatientVitals } from "../api/patients"
 
-function getUrgencyColor(urgency) {
-  if (urgency === "Critical") return "red"
-  if (urgency === "Moderate") return "orange"
-  return "green"
+function getUrgencyClass(urgency) {
+  if (urgency === "Critical") return "critical"
+  if (urgency === "Moderate") return "moderate"
+  return "low"
 }
 
 function PatientDetail() {
@@ -28,50 +28,59 @@ function PatientDetail() {
         setLoading(false)
       }
     }
-
     fetchData()
   }, [id])
 
-  if (loading) return <p>Loading patient details...</p>
-  if (!patient) return <p>Patient not found.</p>
+  if (loading) return <div className="page"><p>Loading patient details...</p></div>
+  if (!patient) return <div className="page"><p>Patient not found.</p></div>
 
   return (
-    <div>
-      <button onClick={() => navigate("/queue")}>← Back to Queue</button>
+    <div className="page">
+      <button className="secondary" onClick={() => navigate("/queue")}
+        style={{ marginBottom: "20px" }}>
+        ← Back to Queue
+      </button>
+
       <h2>Patient Detail</h2>
 
-      <div style={{ border: "1px solid #ccc", padding: "15px", marginBottom: "20px" }}>
-        <h3>{patient.name}</h3>
-        <p>Age: {patient.age}</p>
-        <p>Symptoms: {patient.symptoms.join(", ")}</p>
-        <p>
-          Urgency:{" "}
-          <span style={{ color: getUrgencyColor(patient.urgency) }}>
-            <strong>{patient.urgency}</strong>
-          </span>
-        </p>
-        <p>Score: {patient.score}</p>
-        <p>Registered: {new Date(patient.createdAt).toLocaleString()}</p>
+      <div className="card" style={{ marginBottom: "24px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+          <div>
+            <h3 style={{ marginBottom: "8px" }}>{patient.name}</h3>
+            <p style={{ color: "var(--gray-600)", marginBottom: "4px" }}>Age: {patient.age}</p>
+            <p style={{ color: "var(--gray-600)", marginBottom: "12px" }}>
+              Symptoms: {patient.symptoms.join(", ")}
+            </p>
+            <p style={{ color: "var(--gray-400)", fontSize: "13px" }}>
+              Registered: {new Date(patient.createdAt).toLocaleString()}
+            </p>
+          </div>
+          <div style={{ textAlign: "right" }}>
+            <span className={`badge ${getUrgencyClass(patient.urgency)}`}>
+              {patient.urgency}
+            </span>
+            <p style={{ color: "var(--gray-400)", fontSize: "13px", marginTop: "8px" }}>
+              Score: {patient.score}
+            </p>
+          </div>
+        </div>
       </div>
 
       <h3>Vitals History</h3>
       {vitals.length === 0 ? (
-        <p>No vitals recorded yet.</p>
+        <div className="card">
+          <p style={{ color: "var(--gray-400)" }}>No vitals recorded yet.</p>
+        </div>
       ) : (
         vitals.map((vital, index) => (
-          <div
-            key={index}
-            style={{
-              border: "1px solid #ccc",
-              padding: "10px",
-              marginBottom: "10px"
-            }}
-          >
-            <p>🌡 Temperature: {vital.temperature}°C</p>
-            <p>💉 Blood Pressure: {vital.bloodPressure}</p>
-            <p>❤️ Heart Rate: {vital.heartRate} bpm</p>
-            <p>🫁 Oxygen Saturation: {vital.oxygenSaturation}%</p>
-            <p>Recorded: {new Date(vital.recordedAt).toLocaleString()}</p>
+          <div key={index} className="vitals-card">
+            <p>🌡 Temperature: <strong>{vital.temperature}°C</strong></p>
+            <p>💉 Blood Pressure: <strong>{vital.bloodPressure}</strong></p>
+            <p>❤️ Heart Rate: <strong>{vital.heartRate} bpm</strong></p>
+            <p>🫁 Oxygen: <strong>{vital.oxygenSaturation}%</strong></p>
+            <p className="recorded">
+              Recorded: {new Date(vital.recordedAt).toLocaleString()}
+            </p>
           </div>
         ))
       )}
