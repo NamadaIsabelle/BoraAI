@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { useParams, useNavigate } from "react-router-dom"
 import { getPatient, getPatientVitals } from "../api/patients"
 
 function getUrgencyColor(urgency) {
@@ -7,18 +8,18 @@ function getUrgencyColor(urgency) {
   return "green"
 }
 
-function PatientDetail({ patientId }) {
+function PatientDetail() {
+  const { id } = useParams()
+  const navigate = useNavigate()
   const [patient, setPatient] = useState(null)
   const [vitals, setVitals] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!patientId) return
-
     async function fetchData() {
       try {
-        const patientData = await getPatient(patientId)
-        const vitalsData = await getPatientVitals(patientId)
+        const patientData = await getPatient(id)
+        const vitalsData = await getPatientVitals(id)
         setPatient(patientData)
         setVitals(vitalsData)
       } catch (error) {
@@ -29,14 +30,14 @@ function PatientDetail({ patientId }) {
     }
 
     fetchData()
-  }, [patientId])
+  }, [id])
 
-  if (!patientId) return <p>Select a patient from the queue to view details.</p>
   if (loading) return <p>Loading patient details...</p>
   if (!patient) return <p>Patient not found.</p>
 
   return (
     <div>
+      <button onClick={() => navigate("/queue")}>← Back to Queue</button>
       <h2>Patient Detail</h2>
 
       <div style={{ border: "1px solid #ccc", padding: "15px", marginBottom: "20px" }}>

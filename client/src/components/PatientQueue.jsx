@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 import { getPatients } from "../api/patients"
 
 function getUrgencyColor(urgency) {
@@ -7,9 +8,10 @@ function getUrgencyColor(urgency) {
   return "green"
 }
 
-function PatientQueue({ onSelectPatient }) {
+function PatientQueue() {
   const [patients, setPatients] = useState([])
   const [loading, setLoading] = useState(true)
+  const navigate = useNavigate()
 
   useEffect(() => {
     async function fetchPatients() {
@@ -34,10 +36,11 @@ function PatientQueue({ onSelectPatient }) {
   return (
     <div>
       <h2>Patient Queue</h2>
+      <p style={{ color: "#666", fontSize: "14px" }}>Click a patient to view their details.</p>
       {sorted.map((patient) => (
         <div
           key={patient.id}
-          onClick={() => onSelectPatient(patient.id)}
+          onClick={() => navigate(`/patients/${patient.id}`)}
           style={{
             border: "1px solid #ccc",
             padding: "10px",
