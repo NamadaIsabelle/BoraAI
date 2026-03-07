@@ -24,7 +24,10 @@ function PatientQueue() {
         setLoading(false)
       }
     }
+
     fetchPatients()
+    const interval = setInterval(fetchPatients, 10000)
+    return () => clearInterval(interval)
   }, [])
 
   if (loading) return <div className="page"><p>Loading patients...</p></div>
